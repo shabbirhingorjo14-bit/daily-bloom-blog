@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The Daily Bloom — Lifestyle Blog</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #faf7f2;
+      --warm-white: #fff9f5;
+      --accent: #c8956c;
+      --accent-dark: #a0714f;
+      --text: #2c2420;
+      --text-light: #7a6a62;
+      --border: #e8ddd5;
+      --tag-bg: #f2ebe3;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    /* ── NAV ── */
+    nav {
+      background: var(--warm-white);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 68px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+
+    .logo span { color: var(--accent); }
+
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-light);
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    .nav-search {
+      background: var(--tag-bg);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.4rem 1rem;
+      font-size: 0.82rem;
+      color: var(--text-light);
+      outline: none;
+      width: 180px;
+      transition: border-color 0.2s;
+    }
+    .nav-search:focus { border-color: var(--accent); }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, #3d2c24 0%, #6b4c3b 50%, #c8956c 100%);
+      color: white;
+      text-align: center;
+      padding: 5rem 2rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .hero-tag {
+      display: inline-block;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 999px;
+      padding: 0.3rem 1rem;
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      font-size: 1.05rem;
+      opacity: 0.85;
+      max-width: 520px;
+      margin: 0 auto 2rem;
+    }
+
+    .hero-btn {
+      display: inline-block;
+      background: white;
+      color: var(--accent-dark);
+      padding: 0.75rem 2rem;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .hero-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+
+    /* ── CATEGORIES BAR ── */
+    .categories {
+      display: flex;
+      gap: 0.6rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 1.5rem 2rem;
+      background: var(--warm-white);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .cat-pill {
+      padding: 0.4rem 1.1rem;
+      border-radius: 999px;
+      border: 1.5px solid var(--border);
+      background: transparent;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-light);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .cat-pill:hover, .cat-pill.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+
+    /* ── MAIN LAYOUT ── */
+    .container {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 3rem;
+    }
+
+    /* ── FEATURED POST ── */
+    .featured-card {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      margin-bottom: 2.5rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .featured-img {
+      background: linear-gradient(135deg, #c8956c, #e8b899);
+      min-height: 280px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 5rem;
+    }
+
+    .featured-body {
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .post-tag {
+      display: inline-block;
+      background: var(--tag-bg);
+      color: var(--accent-dark);
+      border-radius: 999px;
+      padding: 0.25rem 0.8rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+    }
+
+    .featured-body h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      line-height: 1.3;
+      margin-bottom: 0.8rem;
+      color: var(--text);
+    }
+
+    .featured-body p {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      margin-bottom: 1.2rem;
+    }
+
+    .post-meta {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.78rem;
+      color: var(--text-light);
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 0.75rem;
+    }
+
+    .read-btn {
+      display: inline-block;
+      margin-top: 1rem;
+      background: var(--accent);
+      color: white;
+      padding: 0.55rem 1.3rem;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+      width: fit-content;
+    }
+    .read-btn:hover { background: var(--accent-dark); }
+
+    /* ── SECTION TITLE ── */
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+
+    /* ── POSTS GRID ── */
+    .posts-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    .post-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+    }
+    .post-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+
+    .card-img {
+      height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+    }
+
+    .card-body { padding: 1.2rem; }
+
+    .card-body h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      line-height: 1.4;
+      margin: 0.5rem 0 0.5rem;
+      color: var(--text);
+    }
+
+    .card-body p {
+      font-size: 0.82rem;
+      color: var(--text-light);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 0.8rem;
+      font-size: 0.75rem;
+      color: var(--text-light);
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar { display: flex; flex-direction: column; gap: 2rem; }
+
+    .widget {
+      background: white;
+      border-radius: 12px;
+      padding: 1.4rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .widget-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      color: var(--text);
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .newsletter-input {
+      width: 100%;
+      padding: 0.6rem 0.9rem;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      outline: none;
+      margin-bottom: 0.7rem;
+      color: var(--text);
+      transition: border-color 0.2s;
+    }
+    .newsletter-input:focus { border-color: var(--accent); }
+
+    .subscribe-btn {
+      width: 100%;
+      padding: 0.65rem;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .subscribe-btn:hover { background: var(--accent-dark); }
+
+    .trending-list { list-style: none; }
+    .trending-item {
+      display: flex;
+      gap: 0.8rem;
+      align-items: flex-start;
+      padding: 0.7rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .trending-item:last-child { border-bottom: none; }
+
+    .trend-num {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--border);
+      font-family: 'Playfair Display', serif;
+      line-height: 1;
+      min-width: 24px;
+    }
+
+    .trend-text { font-size: 0.82rem; color: var(--text); line-height: 1.4; }
+    .trend-cat { font-size: 0.7rem; color: var(--accent); font-weight: 600; text-transform: uppercase; display: block; margin-top: 2px; }
+
+    .tags-cloud { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .tag {
+      background: var(--tag-bg);
+      color: var(--text-light);
+      padding: 0.3rem 0.8rem;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    .tag:hover { background: var(--accent); color: white; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--text);
+      color: rgba(255,255,255,0.7);
+      text-align: center;
+      padding: 2.5rem;
+      margin-top: 2rem;
+      font-size: 0.85rem;
+    }
+
+    footer .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: white;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    footer .footer-logo span { color: var(--accent); }
+
+    @media (max-width: 768px) {
+      .container { grid-template-columns: 1fr; }
+      .featured-card { grid-template-columns: 1fr; }
+      .featured-img { min-height: 180px; }
+      .posts-grid { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo">The Daily <span>Bloom</span></a>
+  <ul class="nav-links">
+    <li><a href="#">Home</a></li>
+    <li><a href="#">Lifestyle</a></li>
+    <li><a href="#">Travel</a></li>
+    <li><a href="#">Food</a></li>
+    <li><a href="#">Wellness</a></li>
+    <li><a href="#">About</a></li>
+  </ul>
+  <input class="nav-search" type="text" placeholder="🔍  Search articles..." />
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-tag">✨ Welcome to Our World</div>
+  <h1>Live Well,<br/>Explore More</h1>
+  <p>Discover inspiring stories, practical tips, and fresh ideas for a life you love — every single day.</p>
+  <a href="#" class="hero-btn">Start Reading →</a>
+</section>
+
+<!-- CATEGORIES -->
+<div class="categories">
+  <button class="cat-pill active">All</button>
+  <button class="cat-pill">Lifestyle</button>
+  <button class="cat-pill">Travel</button>
+  <button class="cat-pill">Food & Drink</button>
+  <button class="cat-pill">Wellness</button>
+  <button class="cat-pill">Home Décor</button>
+  <button class="cat-pill">Fashion</button>
+  <button class="cat-pill">Mindfulness</button>
+</div>
+
+<!-- MAIN -->
+<div class="container">
+  <main>
+    <!-- Featured -->
+    <div>
+      <h2 class="section-title">Featured Story</h2>
+      <div class="featured-card">
+        <div class="featured-img">🌿</div>
+        <div class="featured-body">
+          <span class="post-tag">Wellness</span>
+          <h2>Morning Rituals That Actually Change Your Life</h2>
+          <p>Discover five simple habits that top performers swear by — and how you can build them into your own mornings without feeling overwhelmed.</p>
+          <div class="post-meta">
+            <div class="avatar">S</div>
+            <span>Sara Ali</span>
+            <span>·</span>
+            <span>June 20, 2026</span>
+            <span>·</span>
+            <span>5 min read</span>
+          </div>
+          <a href="#" class="read-btn">Read Article</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Posts -->
+    <div>
+      <h2 class="section-title">Latest Posts</h2>
+      <div class="posts-grid">
+
+        <div class="post-card">
+          <div class="card-img" style="background: linear-gradient(135deg, #f6d365, #fda085);">✈️</div>
+          <div class="card-body">
+            <span class="post-tag">Travel</span>
+            <h3>Hidden Cafés You Must Visit in Istanbul</h3>
+            <p>From cobblestone alleys to rooftop terraces, Istanbul's café culture is an experience unlike any other.</p>
+            <div class="card-footer">
+              <span>June 18, 2026</span>
+              <span>4 min read</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="post-card">
+          <div class="card-img" style="background: linear-gradient(135deg, #a8edea, #fed6e3);">🍳</div>
+          <div class="card-body">
+            <span class="post-tag">Food & Drink</span>
+            <h3>10 Breakfasts That Take Under 10 Minutes</h3>
+            <p>No more skipping the most important meal — these quick recipes are delicious and nutritious.</p>
+            <div class="card-footer">
+              <span>June 15, 2026</span>
+              <span>3 min read</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="post-card">
+          <div class="card-img" style="background: linear-gradient(135deg, #d4fc79, #96e6a1);">🏡</div>
+          <div class="card-body">
+            <span class="post-tag">Home Décor</span>
+            <h3>Minimalist Bedroom Ideas on a Budget</h3>
+            <p>Transform your bedroom into a peaceful sanctuary with these affordable decorating tips.</p>
+            <div class="card-footer">
+              <span>June 12, 2026</span>
+              <span>6 min read</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="post-card">
+          <div class="card-img" style="background: linear-gradient(135deg, #e0c3fc, #8ec5fc);">🧘</div>
+          <div class="card-body">
+            <span class="post-tag">Mindfulness</span>
+            <h3>Digital Detox: A Weekend Without Your Phone</h3>
+            <p>What happens when you put the phone down for 48 hours? The results might surprise you.</p>
+            <div class="card-footer">
+              <span>June 10, 2026</span>
+              <span>7 min read</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="post-card">
+          <div class="card-img" style="background: linear-gradient(135deg, #ffecd2, #fcb69f);">👗</div>
+          <div class="card-body">
+            <span class="post-tag">Fashion</span>
+            <h3>Building a Capsule Wardrobe in 2026</h3>
+            <p>Less is more — learn how to own fewer clothes yet always have something perfect to wear.</p>
+            <div class="card-footer">
+              <span>June 8, 2026</span>
+              <span>5 min read</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="post-card">
+          <div class="card-img" style="background: linear-gradient(135deg, #c2e9fb, #a1c4fd);">🌊</div>
+          <div class="card-body">
+            <span class="post-tag">Travel</span>
+            <h3>Slow Travel: Why Less Is More on Vacation</h3>
+            <p>Stop rushing through cities. Here's why spending more time in fewer places changes everything.</p>
+            <div class="card-footer">
+              <span>June 5, 2026</span>
+              <span>5 min read</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <div class="widget">
+      <div class="widget-title">📬 Newsletter</div>
+      <p style="font-size:0.82rem; color:var(--text-light); margin-bottom:1rem;">Get our best stories delivered to your inbox every week.</p>
+      <input class="newsletter-input" type="email" placeholder="Your email address" />
+      <button class="subscribe-btn">Subscribe Free</button>
+    </div>
+
+    <div class="widget">
+      <div class="widget-title">🔥 Trending Now</div>
+      <ul class="trending-list">
+        <li class="trending-item">
+          <span class="trend-num">01</span>
+          <div><div class="trend-text">How to Start Journaling (And Actually Stick With It)</div><span class="trend-cat">Wellness</span></div>
+        </li>
+        <li class="trending-item">
+          <span class="trend-num">02</span>
+          <div><div class="trend-text">The Best Street Food Cities in the World</div><span class="trend-cat">Travel</span></div>
+        </li>
+        <li class="trending-item">
+          <span class="trend-num">03</span>
+          <div><div class="trend-text">Declutter Your Space, Declutter Your Mind</div><span class="trend-cat">Lifestyle</span></div>
+        </li>
+        <li class="trending-item">
+          <span class="trend-num">04</span>
+          <div><div class="trend-text">5 Smoothie Recipes for More Energy</div><span class="trend-cat">Food</span></div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="widget">
+      <div class="widget-title">🏷️ Popular Tags</div>
+      <div class="tags-cloud">
+        <a href="#" class="tag">Wellness</a>
+        <a href="#" class="tag">Travel</a>
+        <a href="#" class="tag">Recipes</a>
+        <a href="#" class="tag">Minimalism</a>
+        <a href="#" class="tag">Self-Care</a>
+        <a href="#" class="tag">Décor</a>
+        <a href="#" class="tag">Fitness</a>
+        <a href="#" class="tag">Fashion</a>
+        <a href="#" class="tag">Books</a>
+        <a href="#" class="tag">Productivity</a>
+      </div>
+    </div>
+
+    <div class="widget" style="background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color: white;">
+      <div style="font-family:'Playfair Display',serif; font-size:1rem; margin-bottom:0.6rem;">✍️ Write For Us</div>
+      <p style="font-size:0.82rem; opacity:0.9; margin-bottom:1rem;">Have a story to share? We'd love to feature your voice on The Daily Bloom.</p>
+      <a href="#" style="display:inline-block; background:white; color:var(--accent-dark); padding:0.5rem 1.2rem; border-radius:999px; font-size:0.8rem; font-weight:600; text-decoration:none;">Submit a Post</a>
+    </div>
+
+  </aside>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-logo">The Daily <span>Bloom</span></span>
+  <p>A space for stories, ideas, and everyday inspiration.</p>
+  <p style="margin-top:1rem; font-size:0.75rem; opacity:0.5;">© 2026 The Daily Bloom · Made with ❤️</p>
+</footer>
+
+<script>
+  // Category pills filter
+  document.querySelectorAll('.cat-pill').forEach(pill => {
+    pill.addEventListener('click', function() {
+      document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>
